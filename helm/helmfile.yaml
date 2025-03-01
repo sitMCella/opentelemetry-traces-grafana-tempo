@@ -1,0 +1,24 @@
+repositories:
+  - name: grafana
+    url: https://grafana.github.io/helm-charts
+  - name: open-telemetry
+    url: https://open-telemetry.github.io/opentelemetry-helm-charts
+releases:
+  - name: grafana
+    namespace: tracing
+    chart: grafana/grafana
+    version: 8.10.1
+    values:
+      - values_grafana.yaml
+  - name: opentelemetry-collector
+    namespace: tracing
+    chart: open-telemetry/opentelemetry-collector
+    version: 0.117.0
+    values:
+      - values_opentelemetry_collector.yaml
+  - name: tempo-distributed
+    namespace: tracing
+    chart: grafana/tempo-distributed
+    version: 1.32.1
+    values:
+      - values_grafana_tempo_distributed.yaml

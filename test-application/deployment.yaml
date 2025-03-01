@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: opentelemetry-demo
+  labels:
+    name: opentelemetry
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: single-app-single-collector
+  labels:
+    app: single-app-single-collector
+  namespace: opentelemetry-demo
+data:
+  OTEL_SERVICE_NAME: "single-app-single-collector-fastapi-app"
+  OTEL_TRACES_EXPORTER: "console,otlp"
+  OTEL_METRICS_EXPORTER: "console,otlp"
+  OTEL_LOGS_EXPORTER: "console,otlp"
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://opentelemetry-collector.tracing.svc.cluster.local:4317"
+  OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: single-app-single-collector
+  labels:
+    app: single-app-single-collector
+  namespace: opentelemetry-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: single-app-single-collector
+  template:
+    metadata:
+      labels:
+        app: single-app-single-collector
+    spec:
+      containers:
+      - name: single-app-single-collector
+        imagePullPolicy: Always
+        image: rutush10/otel-autoinstrumentation-fastapi-simple-app:0.0.4
+        ports:
+          - containerPort: 8000
+        envFrom:
+          - configMapRef:
+              name: single-app-single-collector
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "0.5"
+          requests:
+            memory: "1Gi"
+            cpu: "0.5"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: single-app-single-collector
+  labels:
+    app: single-app-single-collector
+  namespace: opentelemetry-demo
+spec:
+  type: ClusterIP
+  selector:
+    app: single-app-single-collector
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
