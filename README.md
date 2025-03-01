@@ -166,4 +166,4 @@ http://tempo-distributed-gateway.tracing.svc.cluster.local
 
 ## Test Application
 
-![test-application/README.md](https://github.com/sitMCella/opentelemetry-traces-grafana-tempo/test-application/README.md)
+![test-application/README.md](https://github.com/sitMCella/opentelemetry-traces-grafana-tempo/tree/main/test-application/README.md)
